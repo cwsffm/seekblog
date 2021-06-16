@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>tags</title>
+</head>
+
+<body>
+
+    <!-- 导航 -->
+    <nav th:replace="admin/_fragments :: menu(4)" >
+    </nav>
+
+    <div id="new-list" class="ui attached pointing menu">
+        <div class="m-container">
+            <div class="ui menu">
+                <a th:href="@{/admin/tags/input}" class="item">新增</a>
+                <a th:href="@{/admin/tags}" class="active item">列表</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 中间 -->
+    <main id="main" class="m-padding-tb-large ">
+        <div class="ui m-container">
+            <div class="ui success message" th:unless="${#strings.isEmpty(message)}">
+                <i class="close icon"></i>
+                <div class="header">提示：</div>
+                <p th:text="${message}"></p>
+            </div>
+
+            <table class="ui table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>id</th>
+                        <th>标签</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="tag : ${page.list}">
+                        <td></td>
+                        <td th:text="${tag.id}">1</td>
+                        <td th:text="${tag.name}">java</td>
+                        <td>
+                            <a th:href="@{/admin/tags/{id}/input(id=${tag.id})}" class="ui teal basic button">编辑</a>
+                            <a th:href="@{/admin/tags/{id}/delete(id=${tag.id})}" class="ui red basic button">删除</a>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="6">
+                            <div class="ui right floated pagination menu">
+                                <a th:href="@{/admin/tags(pageNo=${page.pageNum}-1)}" th:unless="${page.isIsFirstPage}" class="icon item"><i class="left chevron icon"></i></a>
+                                <a th:href="@{/admin/tags(pageNo=${page.pageNum}+1)}" th:unless="${page.isIsLastPage}" class="icon item"><i class="right chevron icon"></i></a>
+                            </div>
+                            <a th:href="@{/admin/tags/input}" class="ui teal basic button">新增</a>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer th:replace="admin/_fragments :: footer">
+    </footer>
+
+    <th:block th:replace="admin/_fragments :: script">
+    </th:block>
+    <script>
+        $(".btn-sidebar").click(function() {
+            $(".m-item").toggleClass("m-mobile-hide");
+        });
+
+        $(".ui.dropdown").dropdown()
+
+        $(".message .close").on("click", function () {
+            $(this).closest(".message")
+            .transition("fade");
+        })
+
+        $(function(){
+            var height = $("nav").height()+$("#new-list").height()+$("main").innerHeight()+$("footer").height();
+            setFooterFixedBottom(height);
+        })
+
+        function setFooterFixedBottom(height){
+
+            if(height>$(window).height()){
+                $("footer").removeClass("m-stick-bottom");
+            }else {
+                $("footer").addClass("m-stick-bottom");
+            };
+        }
+    </script>
+
+
+</body>
+
+</html>

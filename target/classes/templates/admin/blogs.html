@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>blogs</title>
+</head>
+
+<body>
+
+    <!-- 导航 -->
+    <nav th:replace="admin/_fragments :: menu(2)" >
+    </nav>
+
+    <div id="new-list" class="ui attached pointing menu">
+        <div class="m-container">
+            <div class="ui menu">
+                <a th:href="@{/admin/blogs/input}" class="item">新增</a>
+                <a th:href="@{/admin/blogs}" class="active item">列表</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 中间 -->
+    <div id="main" class="m-padding-tb-large ">
+        <div class="ui m-container">
+
+            <!--条件查询-->
+            <form th:action="@{/admin/blogs/search}" method="POST" class="ui segment form">
+                <input type="hidden" name="page">
+                <div class="inline fields">
+                    <div class="field">
+                        <input type="text" name="title" placeholder="标题">
+                    </div>
+                    <div class="field">
+                        <div class="ui clear selection dropdown load">
+                            <input type="hidden" name="typeId">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">分类</div>
+                            <div class="menu" id="types">
+                                <div th:fragment="typeList" class="item" th:each="type : ${types}" th:data-value="${type.id}" th:text="${type.name}">分类</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui clear selection dropdown load">
+                            <input type="hidden" name="tagId">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">标签</div>
+                            <div class="menu" id="tags">
+                                <div th:fragment="tagList" class="item" th:each="tag : ${tags}" th:data-value="${tag.id}" th:text="${tag.name}">标签</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input type="checkbox" id="recommend" name="recommend">
+                            <label for="recommend">推荐</label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <button type="button" id="search-btn" class="ui teal basic button"><i class="search icon"></i>搜索</button>
+                    </div>
+                    <div class="field">
+                        <button type="button" id="clear-btn" class="ui button">clear</button>
+                    </div>
+                    <div class="field right floated">
+                        <a th:href="@{/admin/blogs/input}" class="ui teal basic button">新增</a>
+                    </div>
+                </div>
+            </form>
+            <div class="ui success message" th:unless="${#strings.isEmpty(message)}">
+                <i class="close icon"></i>
+                <div class="header">提示：</div>
+                <p th:text="${message}"></p>
+            </div>
+            <div id="table-container">
+                <table th:fragment="blogList" class="ui table">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>标题</th>
+                        <th>类型</th>
+                        <th>推荐</th>
+                        <th>标签</th>
+                        <th>状态</th>
+                        <th>发布时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="blog : ${page.list}">
+                        <td th:text="${blog.id}">id</td>
+                        <td th:text="${blog.title}">title</td>
+                        <td><span th:text="${blog.type !=null ? blog.type.name : null}" th:if="${blog.type!=null}" class="ui teal basic button">type</span></td>
+                        <td th:text="${blog.recommend}?'是':'否'">no</td>
+                        <td><span th:each="tag : ${blog.tags}" th:text="${tag.name}" class="ui teal basic button">tag</span></td>
+                        <td th:text="${blog.published}?'已发布':'草稿'">状态</td>
+                        <td th:text="${blog.createTime}">2020.1.1</td>
+                        <td>
+                            <a th:href="@{/admin/blogs/{id}/input(id=${blog.id})}" class="ui teal basic button">编辑</a>
+                            <a th:href="@{/admin/blogs/{id}/delete(id=${blog.id})}" class="ui red basic button">删除</a>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="8">
+                            <div class="ui right floated pagination menu">
+                                <!--<a th:href="@{/admin/blogs{path}(path=${path},blogQuery=${blog},pageNo=${page.pageNum}-1)}" th:unless="${page.isIsFirstPage}" class="icon item">--><!--<i class="left chevron icon"></i>--><!--上一页</a>-->
+                                <!--<a th:href="@{/admin/blogs{path}(path=${path},blogQuery=${blog},pageNo=${page.pageNum}+1)}" th:unless="${page.isIsLastPage}" class="icon item">--><!--<i class="right chevron icon"></i>--><!--下一页</a>-->
+                                <a onclick="page(this)" th:attr="data-page=${page.pageNum}-1" th:unless="${page.isIsFirstPage}" class="icon item"><!--<i class="left chevron icon"></i>-->上一页</a><!--th:unless="${page.isIsFirstPage}"-->
+                                <a onclick="page(this)" th:attr="data-page=${page.pageNum}+1" th:unless="${page.isIsLastPage}" class="icon item"><!--<i class="right chevron icon"></i>-->下一页</a><!--th:unless="${page.isIsLastPage}"-->
+                            </div>
+                            <a th:href="@{/admin/blogs/input}" class="ui teal basic button">新增</a>
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部 -->
+    <footer th:replace="admin/_fragments :: footer">
+    </footer>
+
+    <th:block th:replace="admin/_fragments :: script">
+    </th:block>
+    <script>
+        $(".btn-sidebar").click(function() {
+            $(".m-item").toggleClass("m-mobile-hide");
+        });
+
+        $(".ui.dropdown").dropdown();
+
+        $(".message .close").on("click", function () {
+            $(this).closest(".message")
+                .transition("fade");
+        })
+
+        $("#clear-btn").on("click",function () {
+            $(".clear").dropdown("clear");
+        })
+
+        $("#search-btn").click(function () {
+            loaddata();
+        })
+
+        function page(obj) {
+            $("[name='page']").val($(obj).data("page"));
+            loaddata();
+        }
+
+        function loaddata() {
+            $("#table-container").load("/admin/blogs/search", {
+                title: $("[name='title']").val(),
+                typeId: $("[name='typeId']").val(),
+                recommend: $("[name='recommend']").prop('checked'),
+                tagId: $("[name='tagId']").val(),
+                pageNum: $("[name='page']").val()
+            })
+        }
+
+        $(function(){
+            getHeight();
+        })
+        $(".load").one("mouseenter",function () {
+            getTypes();
+            getTags();
+        })
+
+        function getHeight(){
+            var height = $("nav").height()+$("#new-list").height()+$("#main").innerHeight()+$("footer").height();
+            if(height>=$(window).height()){
+                $("footer").removeClass("m-stick-bottom");
+            }else {
+                $("footer").addClass("m-stick-bottom");
+            };
+        }
+        function getTypes() {
+            $("#types").load("/admin/getTypes")
+        }
+        function getTags() {
+            $("#tags").load("/admin/getTags")
+        }
+    </script>
+</body>
+
+</html>

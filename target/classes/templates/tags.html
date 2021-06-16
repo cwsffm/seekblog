@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="_fragments :: head(~{::title})">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>tags</title>
+</head>
+
+<body>
+
+    <!-- 导航 -->
+    <nav th:replace="_fragments :: menu(3)" class="ui inverted vertical segment m-padding-tb-mini">
+    </nav>
+
+    <!-- 中间 -->
+    <main class="m-padding-tb-large ">
+        <div class="ui container">
+
+            <!-- 头 -->
+            <div class="ui top attached segment">
+                <div class="ui middle aligned two column grid">
+                    <div class="column">
+                        <h3 class="ui teal header">分类</h3>
+                    </div>
+                    <div class="column right aligned">
+                        共<h3 class="ui orange header m-inline-block" th:text="${page.total}">14</h3>篇
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui attached segment" id="tags-container" th:fragment="TagList">
+                <div class="ui labeled button m-margin-tb-mini" th:each="tag : ${tags}">
+                    <a th:href="@{/tags/{tagId}(tagId=${tag.id})}" class="ui basic button" th:classappend="${tag.id==tagId}?'teal'" th:text="${tag.name}">java</a>
+                    <div class="ui basic left pointing label" th:classappend="${tag.id==tagId}?'teal'" th:text="${tag.number}">12</div>
+                </div>
+            </div>
+
+            <div th:replace="_fragments :: content"  class="ui attached segment"><!--content--></div>
+
+            <div class="ui bottom attached segment">
+                <div class="ui middle aligned two column grid">
+                    <div class="column">
+                        <a th:href="@{/types/{typeId}(typeId=${typeId},pageNo=${page.pageNum}-1)}" th:unless="${page.isIsFirstPage}" class="ui teal basic button">上一页</a>
+                    </div>
+                    <div class="column right aligned">
+                        <a th:href="@{/types/{typeId}(typeId=${typeId},pageNo=${page.pageNum}+1)}" th:unless="${page.isIsLastPage}" class="ui teal basic button">下一页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer th:replace="_fragments :: footer" class="ui inverted vertical segment">
+        <div class="ui center aligned container">
+            <div class="ui stackable inverted divided grid">
+                <div class="three wide column">
+                    <div class="ui inverted link list">
+                        <div class="item">
+                            <img th:src="@{/images/wechat.jpg}" class="ui rounded image" alt="微信" style="width: 120px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="three wide column">
+                    <h4 class="ui inverted hander">new blog</h4>
+                    <div class="ui inverted link list">
+                        <a href="" class="item m-opacity-mini">????</a>
+                        <a href="" class="item m-opacity-mini">????</a>
+                        <a href="" class="item m-opacity-mini">????</a>
+                    </div>
+                </div>
+                <div class="three wide column">
+                    <h4 class="ui inverted hander">联系我</h4>
+                    <div class="ui inverted link list">
+                        <a href="" class="item m-opacity-mini">Email:1293540568@qq.com</a>
+                        <a href="" class="item m-opacity-mini">QQ:1293540568</a>
+                        <a href="" class="item m-opacity-mini">微信:cwsffm-l</a>
+                    </div>
+                </div>
+                <div class="seven wide column">
+                    <h4 class="ui inverted hander">new blog</h4>
+                    <p class="m-opacity-mini">this is my blog</p>
+                </div>
+            </div>
+            <div class="ui inverted section divider"></div>
+            <p>Copyright <i class="copyright outline icon"></i>2020-2021 Seek Designed by Seek</p>
+        </div>
+    </footer>
+
+    <th:block th:replace="_fragments :: script">
+
+    </th:block>
+    <script>
+        $(".btn-sidebar").click(function() {
+            $(".m-item").toggleClass("m-mobile-hide");
+        });
+
+        $("#payBtn").popup({
+            popup: $(".payQR.popup"),
+            on: "click",
+            position: "bottom center"
+        })
+
+        $(function(){
+            setFooterFixedBottom();
+        })
+
+        function setFooterFixedBottom(){
+            var height = $("nav").height()+$("main").height()+$("footer").height();
+            if(height>$(window).height()){
+                $("footer").removeClass("m-stick-bottom");
+            }else {
+                $("footer").addClass("m-stick-bottom");
+            };
+        }
+    </script>
+</body>
+
+</html>

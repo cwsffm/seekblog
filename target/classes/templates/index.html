@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="_fragments :: head(~{::title})">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>index</title>
+</head>
+
+<body>
+
+    <!-- 导航 -->
+    <nav th:replace="_fragments :: menu(1)" class="ui inverted vertical segment m-padding-tb-mini">
+    </nav>
+
+    <!-- 中间 -->
+    <main class="m-padding-tb-large ">
+        <div class="ui m-container">
+            <div class="ui stackable grid">
+                <!-- left -->
+                <div class="eleven wide column">
+                    <!-- header -->
+                    <div class="ui top attached segment">
+                        <div class="ui middle aligned two column grid">
+                            <div class="column">
+                                <h3 class="ui teal header">博客</h3>
+                            </div>
+                            <div class="column right aligned">
+                                共<h3 class="ui orange header m-inline-block" th:text="${page.total}">14</h3>篇
+                            </div>
+                        </div>
+                    </div>
+                    <!-- content -->
+                    <div th:replace="_fragments :: content"  class="ui attached segment">
+                    </div>
+                    <!-- footer -->
+                    <div class="ui bottom attached segment">
+                        <div class="ui middle aligned two column grid">
+                            <div class="column">
+                                <a th:href="@{/(pageNo=${page.pageNum}-1)}" th:unless="${page.isIsFirstPage}" class="ui teal basic button">上一页</a>
+                            </div>
+                            <div class="column right aligned">
+                                <a th:href="@{/(pageNo=${page.pageNum}+1)}" th:unless="${page.isIsLastPage}" class="ui teal basic button">下一页</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- right -->
+                <div class="five wide column">
+                    <!-- 分类 -->
+                    <div class="ui segments">
+                        <div class="ui secondary segment">
+                            <div class="ui two column grid">
+                                <div class="column">分类</div>
+                                <div class="column right aligned"><a th:href="@{/types/-1}" target="_blank">more</a></div>
+                            </div>
+                        </div>
+                        <div class="ui segment">
+                            <div th:each="type : ${types}" class="ui attached fluid vertical menu">
+                                <a th:href="@{/types/{typeId}(typeId = ${type.id})}" class="item types" th:data-value="${type.id}"><span th:text="${type.name}">type</span><div class="ui label" th:text="${type.number}">number</div></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 标签 -->
+                    <div class="ui segments">
+                        <div class="ui secondary segment">
+                            <div class="ui two column grid">
+                                <div class="column">标签</div>
+                                <div class="column right aligned"><a th:href="@{/tags/-1}" target="_blank">more</a></div>
+                            </div>
+                        </div>
+
+                        <div class="ui segment">
+                            <a th:href="@{/tags/{tagId}(tagId=${tag.id})}" target="_blank" class="ui teal basic label m-margin-tb-mini" th:each="tag : ${tags}" th:data-value="${tag.id}"><span th:text="${tag.name}">tag</span> <div class="detail" th:text="${tag.number}">number</div></a>
+                        </div>
+                    </div>
+
+                    <!-- 最新推荐 -->
+                    <div class="ui segments">
+                        <div class="ui secondary segment">
+                            <div class="ui two column grid">
+                                <div class="column">最新推荐</div>
+                                <div class="column right aligned"></div>
+                            </div>
+                        </div>
+                        <div class="ui segment" th:each="blog : ${recommendBlogs}">
+                            <a th:href="@{/blog/{id}(id=${blog.id})}" target="_blank" th:text="${blog.title}">title</a>
+                        </div>
+                    </div>
+
+                    <!-- 二维码 -->
+                    <div class="ui horizontal inverted divider header">关注我</div>
+                    <div class="ui centered aligned card" style="width: 12em;height: 12em;">
+                        <img th:src="@{/images/wechat.jpg}" alt="" class="ui rounded image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- 底部 -->
+    <footer th:replace="_fragments :: footer" class="ui inverted vertical segment">
+        <div class="ui center aligned container">
+            <div class="ui stackable inverted divided grid">
+                <div class="three wide column">
+                    <div class="ui inverted link list">
+                        <div class="item">
+                            <img th:src="@{/images/wechat.jpg}" class="ui rounded image" alt="微信" style="width: 120px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="three wide column">
+                    <h4 class="ui inverted hander">new blog</h4>
+                    <div class="ui inverted link list">
+                        <a href="" class="item m-opacity-mini">????</a>
+                        <a href="" class="item m-opacity-mini">????</a>
+                        <a href="" class="item m-opacity-mini">????</a>
+                    </div>
+                </div>
+                <div class="three wide column">
+                    <h4 class="ui inverted hander">联系我</h4>
+                    <div class="ui inverted link list">
+                        <a href="" class="item m-opacity-mini">Email:1293540568@qq.com</a>
+                        <a href="" class="item m-opacity-mini">QQ:1293540568</a>
+                        <a href="" class="item m-opacity-mini">微信:cwsffm-l</a>
+                    </div>
+                </div>
+                <div class="seven wide column">
+                    <h4 class="ui inverted hander">new blog</h4>
+                    <p class="m-opacity-mini">this is my blog</p>
+                </div>
+            </div>
+            <div class="ui inverted section divider"></div>
+            <p>Copyright <i class="copyright outline icon"></i>2020-2021 Seek Designed by Seek</p>
+        </div>
+    </footer>
+
+    <th:block th:replace="_fragments :: script">
+
+    </th:block>
+    <script>
+        $(".btn-sidebar").click(function() {
+            $(".m-item").toggleClass("m-mobile-hide");
+        });
+
+        $(function(){
+            setFooterFixedBottom();
+        })
+
+        function setFooterFixedBottom(){
+            var height = $("nav").height()+$("main").height()+$("footer").height();
+            if(height>$(window).height()){
+                $("footer").removeClass("m-stick-bottom");
+            }else {
+                $("footer").addClass("m-stick-bottom");
+            };
+        }
+    </script>
+</body>
+
+</html>

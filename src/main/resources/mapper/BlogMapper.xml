@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--上面是头部命名空间-->
+<!--mapper开始就是自己定义的了-->
+<mapper namespace="com.seek.seekblog.mapper.BlogMapper">    <!--对应的mapper类的包路径-->
+
+    <resultMap id="BaseResultMap" type="com.seek.seekblog.entity.Blog" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="share_statement" property="shareStatement" />
+        <result column="first_picture" property="firstPicture"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="type_id" property="typeId"/>
+        <result column="user_id" property="userId"/>
+    </resultMap>
+
+    <!--传参是对象的话parameterType就写那个对象的路径,这边是int的type-->
+    <select id="findAllBlogs" parameterType="com.seek.seekblog.vo.BlogQuery" resultMap="BaseResultMap">
+        select distinct tb.* from t_blog tb inner join t_blog_tag tbt
+        <where>
+            <if test="title != null and title != ''">
+                title like #{title}
+            </if>
+            <if test="typeId != null and typeId != ''">
+                and type_id=#{typeId}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                and recommend=#{recommend}
+            </if>
+            <if test="tagId != null and tagId != ''">
+                and tb.id=tbt.blog_id and tbt.tag_id=#{tagId}
+            </if>
+        </where>
+    </select>
+
+    <select id="listByStrBlog" parameterType="String" resultMap="BaseResultMap">
+        select * from t_blog where title like '%${str}%' or introduce like "%"#{str}"%" or content like concat('%',#{str},'%')
+    </select>
+
+</mapper>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>index</title>
+</head>
+
+<body>
+
+    <!-- 导航 -->
+    <nav th:replace="admin/_fragments :: menu(1)" >
+    </nav>
+
+    <!-- 中间 -->
+    <main id="main" class="m-padding-tb-large ">
+        <div class="ui container">
+
+            <div class="ui three column doubling stackable grid">
+                <div class="column">
+                    <div class="ui segment">
+                        <h2 class="ui header">
+                            <i class="book icon"></i>
+                            <div class="content">
+                                博客数量<span id="blogNumbers" class="ui basic label"></span>
+                            </div>
+                        </h2>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui segment">
+                        <h2 class="ui header">
+                            <i class="map signs icon"></i>
+                            <div class="content">
+                                类型数量<span id="typeNumbers" class="ui basic label"></span>
+                            </div>
+                        </h2>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui segment">
+                        <h2 class="ui header">
+                            <i class="tags icon"></i>
+                            <div class="content">
+                                标签数量<span id="tagNumbers" class="ui basic label"></span>
+                            </div>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="ui stackable grid">
+                <div id="lastSeven" class="eleven wide column">
+                    <div class="card">
+                        <div class="card-header">
+                            <p>近日博客新增数量</p>
+                        </div>
+                        <div class="card-body">
+                            <div id="blogNumber" class="ui attached segment" style="height: 400px"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="five wide column">
+                    <div class="card">
+                        <div class="card-header">
+                            <p>近日博客新增数量</p>
+                        </div>
+                        <div class="card-body">
+                            <div id="Number" class="ui attached segment" style="height: 400px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer th:replace="admin/_fragments :: footer">
+    </footer>
+
+    <th:block th:replace="admin/_fragments :: script">
+    </th:block>
+    <script  th:inline="javascript">
+        $(".btn-sidebar").click(function() {
+            $(".m-item").toggleClass("m-mobile-hide");
+        });
+
+        $(".ui.dropdown").dropdown()
+
+        $(function(){
+            setFooterFixedBottom();
+        })
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '近日新增'
+            },
+            tooltip: {},
+            legend: {
+                data: ['blog']
+            },
+            xAxis: {
+                // type: 'category',
+                data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子","手套"]
+            },
+            yAxis: {
+                // type: 'value'
+            },
+            series: [{
+                name: 'blog',
+                type: 'line',
+                data: [4,8,4,6,5,3,6],
+                smooth: true
+            }]
+        };
+
+        var option1 = {
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                top: '5%',
+                left: 'center'
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '40',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [
+                        {value: 1048, name: '搜索引擎'},
+                        {value: 735, name: '直接访问'},
+                        {value: 580, name: '邮件营销'},
+                        {value: 484, name: '联盟广告'},
+                        {value: 300, name: '视频广告'}
+                    ]
+                }
+            ]
+        };
+
+
+        var serverUrl = /*[[#{blog.serverUrl}]]*/""
+
+        $(function () {
+
+            $.get("/admin/lastSeven",function (data,status) {
+                var date = eval(data)
+                // 基于准备好的dom，初始化echarts实例
+                var blogNumber = echarts.init($("#blogNumber")[0]);
+
+                option.series[0].data = date[1]
+                option.xAxis.data = date[0]
+                // 使用刚指定的配置项和数据显示图表。
+                blogNumber.setOption(option);
+            })
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/listType",
+                contentType: "application/json; charset=utf-8",
+                // data: JSON.stringify(json), /!*传给后端的数据格式json*!/
+                dataType: "json",	/*后端返回的数据格式json*/
+                success: function(data){
+                    var types = []
+                    for(var i = 0;i<data.length;i++){
+                        var type = {}
+                        type.name = data[i].name
+                        type.value = data[i].number
+                        types[i] = type
+                    }
+
+                    var number = echarts.init($("#Number")[0]);
+                    option1.series[0].data = types
+                    number.setOption(option1);
+                },
+                error: function (message) {
+
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/blogNumber",
+                contentType: "application/json; charset=utf-8",
+                // data: JSON.stringify(json), /!*传给后端的数据格式json*!/
+                dataType: "json",	/*后端返回的数据格式json*/
+                success: function(data){
+                    console.log(data)
+                    $("#blogNumbers").text(data)
+                },
+                error: function (message) {
+
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/typeNumber",
+                contentType: "application/json; charset=utf-8",
+                // data: JSON.stringify(json), /!*传给后端的数据格式json*!/
+                dataType: "json",	/*后端返回的数据格式json*/
+                success: function(data){
+                    console.log(data)
+                    $("#typeNumbers").text(data)
+                },
+                error: function (message) {
+
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/tagNumber",
+                contentType: "application/json; charset=utf-8",
+                // data: JSON.stringify(json), /!*传给后端的数据格式json*!/
+                dataType: "json",	/*后端返回的数据格式json*/
+                success: function(data){
+                    console.log(data)
+                    $("#tagNumbers").text(data)
+                },
+                error: function (message) {
+
+                }
+            });
+
+        })
+    </script>
+</body>
+</html>

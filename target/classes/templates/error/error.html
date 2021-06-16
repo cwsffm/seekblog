@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>error</title>
+    <style type="text/css">
+        div{
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+<h1>ERROR</h1>
+<div>
+<!--    <div th:utext="'&lt;!&#45;&#45;'" th:remove="tag"></div>-->
+    <div th:utext="'Failed Request URL : ' + ${url}" th:remove="tag"></div><br>
+    <div th:utext="'Exception message : ' + ${exception.message}" th:remove="tag"></div><br>
+    <ul th:remove="tag">
+        <li th:each="st : ${exception.stackTrace}" th:remove="tag"><span th:utext="${st}" th:remove="tag"></span></li>
+    </ul><br>
+<!--    <div th:utext="'&#45;&#45;&gt;'" th:remove="tag"></div>-->
+</div>
+</body>
+</html>

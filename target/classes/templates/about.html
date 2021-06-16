@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:replace="_fragments :: head(~{::title})">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>about</title>
+</head>
+
+<body>
+
+    <!-- 导航 -->
+    <nav th:replace="_fragments :: menu(5)" class="ui inverted vertical segment m-padding-tb-mini">
+    </nav>
+
+    <!-- 中间 -->
+    <main class="m-padding-tb-large ">
+        <div class="ui m-container">
+            <div class="ui stackable grid">
+                <div class="eleven wide column">
+                    <img src="https://unsplash.it/800/450?image=1005" alt="" class="ui rounded image">
+                </div>
+
+                <div class="five wide column">
+                    <div class="ui top attached segment">
+                        <div class="ui header">关于我</div>
+                    </div>
+                    <div class="ui attached segment">
+                        <p>李海锋</p>
+                        <p>男、98年</p>
+                        <p>喜欢编程，喜欢探索新技术,闲暇喜欢看看动漫、听听音乐，热爱生活向往自然。</p>
+                    </div>
+                    <div class="ui attached segment">
+                        <div class="ui orange basic label m-margin-tb-mini">编程</div>
+                        <div class="ui pink basic label">动漫</div>
+                        <div class="ui teal basic label">音乐</div>
+                    </div>
+                    <div class="ui attached segment">
+                        <div class="ui orange basic label m-margin-tb-mini">前端</div>
+                        <div class="ui orange basic label">后端</div>
+                        <div class="ui orange basic label">MySQL</div>
+                    </div>
+                    <div class="ui attached segment">
+                        <a href="javascript:;" class="ui teal basic button">我的简历</a>
+                    </div>
+                    <div class="ui bottom attached segment">
+                        <a href="#" class="ui circular icon button"><i class="github icon"></i></a>
+                        <a href="#" class="ui circular icon button"><i class="weixin icon"></i></a>
+                        <a href="#" class="ui circular icon button qq" data-content="1293540568" data-position="bottom center"><i class="qq icon"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer th:replace="_fragments :: footer" class="ui inverted vertical segment">
+
+    </footer>
+
+    <th:block th:replace="_fragments :: script">
+
+    </th:block>
+    <script>
+        $(".btn-sidebar").click(function() {
+            $(".m-item").toggleClass("m-mobile-hide");
+        });
+
+        $(".qq").popup()
+
+        $(function(){
+            setFooterFixedBottom();
+        })
+    </script>
+</body>
+
+</html>
